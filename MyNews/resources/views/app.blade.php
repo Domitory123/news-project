@@ -8,6 +8,6 @@
     </head>
     <body class="antialiased">
     <h1>123123</h1>
-                
+     @yield('content')        
     </body>
 </html>

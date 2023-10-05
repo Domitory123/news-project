@@ -20,4 +20,6 @@ Route::controller(NewsController::class)->group(function () {
     Route::get('/', 'test');
     Route::get('/create', 'create');
     Route::post('/store', 'store')->name('store');
+    Route::get('/show/{news}','show')->name('show');
+
 });

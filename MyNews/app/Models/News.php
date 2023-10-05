@@ -9,7 +9,15 @@ class News extends Model
 {
     use HasFactory;
 
-    public function tag()
+    protected $guarded = false;
+
+    protected $fillable = [
+      'name',
+      'text',
+      
+  ];
+
+  public function tags()
   {
     return $this->hasMany(Tag::class);
   }

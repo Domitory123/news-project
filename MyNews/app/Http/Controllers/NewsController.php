@@ -25,7 +25,7 @@ class NewsController extends Controller
      */
     public function index()
     {
-        //
+        //view('profile', compact('user'));
     }
 
     /**
@@ -41,29 +41,23 @@ class NewsController extends Controller
      */
     public function store(Request $request)
     {
-        //dd($request->input('text') , $request->input('teg'));
-
         $text = $request->input('tag');
         $words = str_word_count($text, 1);
-        
-        // $words буде масивом, що містить окремі слова з тексту
-        print_r($words);
-
-       // $post = new Post();
-      //  $post->title = 'Заголовок посту';
-      //  $post->content = 'Текст посту';
-        
-        // Використання associate() для призначення батьківського об'єкта (категорії) до поста
-        //$post->category()->associate($category);
-       
-      // $post->save();
+    
+        $news = new News();
+        $news->text = $request->input('text');
+        $news->name = "name";
+        $news->photo='photo';
+         $news->save();
 
         foreach ($words as $word) {
-            Tag::create(['name' => $word]);
-         //   $post->category()->associate($category);
+           $tag = new Tag();
+           $tag->name = $word;
+           $tag->news()->associate($news);
+           $tag->save();
         }
 
-
+        return view('show', compact('news'));
     }
 
     /**
@@ -71,7 +65,7 @@ class NewsController extends Controller
      */
     public function show(News $news)
     {
-        //
+       return view('show', compact('news'));
     }
 
     /**

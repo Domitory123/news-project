@@ -9,6 +9,11 @@ class Tag extends Model
 {
     use HasFactory;
 
+    //protected $guarded = false;
+
+    protected $fillable = [
+        'name',
+    ];
     public function news()
     {
         return $this->belongsTo(News::class);

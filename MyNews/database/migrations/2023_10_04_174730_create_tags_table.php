@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('tags', function (Blueprint $table) {
             $table->id();
             $table->Integer("news_id")->constrained("news");
-            $table->string('text');
+            $table->string('name');
             $table->timestamps();
         });
     }

@@ -7,7 +7,7 @@
 
   {{-- <img style="height:100px;" src="{{ asset($friend->avatar) }}"> --}}
   <strong>{{$news->name}}</strong> <br /> 
-   <strong>{{$news->text}}</strong> <br /> 
+   {!!$news->text!!} <br /> 
 
      @foreach($news->tags as $tag)
     <strong>{{$tag->name}}</strong> <br />

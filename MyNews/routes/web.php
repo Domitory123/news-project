@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NewsController;
+use App\Http\Controllers\TagController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -17,9 +18,14 @@ use App\Http\Controllers\NewsController;
 //     return view('welcome');
 // });
 Route::controller(NewsController::class)->group(function () {
-    Route::get('/', 'test');
-    Route::get('/create', 'create');
+    Route::get('/', 'index')->name('index');
+    Route::get('/create', 'create')->name('create');
     Route::post('/store', 'store')->name('store');
-    Route::get('/show/{news}','show')->name('show');
+    Route::get('/show/{news}','show')->name('news.show');
+});
 
+Route::controller(TagController::class)->group(function () {
+    
+    Route::get('/delete/{tag}', 'destroy')->name('tag.delete');
+  
 });

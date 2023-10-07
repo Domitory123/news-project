@@ -11,11 +11,11 @@ class News extends Model
 
     protected $guarded = false;
 
-    protected $fillable = [
-      'name',
-      'text',
+  //   protected $fillable = [
+  //     'name',
+  //     'text',
       
-  ];
+  // ];
 
   public function tags()
   {

@@ -11,15 +11,20 @@ class News extends Model
 
     protected $guarded = false;
 
-  //   protected $fillable = [
-  //     'name',
-  //     'text',
-      
-  // ];
-
   public function tags()
   {
     return $this->hasMany(Tag::class);
   }
+
+  public function getTagsString()
+  {       
+    $tagNames = $this->tags->pluck('name')->toArray();
+    return implode(' ', $tagNames);
+  }
+  public function getTextWithoutTag()
+  {    
+    return preg_replace('/<a[^>]*>(.*?)<\/a>/i', '$1', $this->text); 
+  }
+
 
 }

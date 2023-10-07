@@ -1,3 +1,4 @@
+@charset "UTF-8";
 body {
   margin: 0;
   padding: 0;
@@ -12,7 +13,7 @@ body {
   width: 100%;
   height: 20%;
   background-color: rgb(205, 205, 205);
-  padding: 1%;
+  padding: 0.5%;
 }
 .container-main .content {
   padding: 1%;
@@ -25,4 +26,38 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.container-main .container-create input {
+  font-size: 20px;
+  margin: 1%;
+}
+.container-main .container-create textarea {
+  font-size: 20px;
+  margin: 1%;
+}
+.container-main .container-create button {
+  font-size: 20px;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center; /* Вирівнювання по центру */
+  align-items: center; /* Вирівнювання по вертикалі по центру */
+  margin-top: 20px; /* Відступ зверху */
+}
+
+/* Стилі для окремих сторінок */
+.page-item {
+  list-style-type: none;
+  padding: 0;
+  margin: 5px;
+}
+
+/* Стилі для активної сторінки */
+.page-item.active {
+  background-color: #6aa5e5; /* Колір фону */
+  border-color: #007bff; /* Колір межі */
+  color: #fff; /* Колір тексту */
+  padding: 6px 12px; /* Параметри внутрішнього відступу */
+  border-radius: 4px; /* Округлені кути */
 }

@@ -22,6 +22,7 @@ Route::controller(NewsController::class)->group(function () {
     Route::get('/create', 'create')->name('create');
     Route::post('/store', 'store')->name('store');
     Route::get('/show/{news}','show')->name('news.show');
+    Route::get('/edit/{news}','edit')->name('news.edit');
 });
 
 Route::controller(TagController::class)->group(function () {

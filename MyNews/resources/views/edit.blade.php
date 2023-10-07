@@ -1,7 +1,7 @@
 @extends('app')
 
 @section('content')
-<h2>Створення новини</h2>
+<h2>Редагування новини</h2>
 <div class="container-create">
     <div class="create-form">
 
@@ -9,19 +9,24 @@
             {{ csrf_field() }}
 
             <b>Назва</b> <br>
-             <input class="" type="text" name="name" value="{{ old('name') }}" placeholder="name" > 
+             <input class="" type="text" name="name" value="{{ $news->name }}" placeholder="name" > 
              <br>
              @if ($errors->has('name'))
              <div class="alert alert-danger">{{ $errors->first('name') }}</div>
              @endif
+
             <b>Теги</b> <br>
-            <input class="" type="text" name="tag" value="{{ old('tag') }}" placeholder="tag" >
+
+            <input class="" type="text" name="tag" value="{{ $news->getTagsString() }}" placeholder="tag" >
+
             @if ($errors->has('tag'))
                 <div class="alert alert-danger">{{ $errors->first('tag') }}</div>
             @endif
+            
+
             <br>
             <b>Текст</b> <br>
-                <textarea name="text" cols="53"  rows="15" placeholder="text" >{{ old('text') }}</textarea> <br/>
+                <textarea name="text" cols="53"  rows="15" placeholder="text" >{{ $news->getTextWithoutTag() }}</textarea> <br/>
             @if ($errors->has('text'))
                 <div class="alert alert-danger">{{ $errors->first('text') }}</div>
             @endif
@@ -29,7 +34,7 @@
             @if ($errors->has('file'))
             <div class="alert alert-danger">{{ $errors->first('file') }}</div>
              @endif
-
+             <img style="height:100px;" src="{{ asset($news->photo) }}"> 
                 <br>
             <button type="submit">Зберегти</button>
             

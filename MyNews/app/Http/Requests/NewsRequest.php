@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Models\Tag;
 
 class NewsRequest extends FormRequest
 {
@@ -36,14 +37,23 @@ class NewsRequest extends FormRequest
             // Ваша логіка валідації тут
            // dd($value);
 
+           $pattern = '/\p{L}+/u';
+           preg_match_all($pattern, $value, $matches);
+           $words = $matches[0];
 
-           $validator->setCustomMessages([
-            'custom_validation' => 'Це поле повинно мати значення "some_expected_value".'
-         ]);
+          $words;
+          $existingTags = Tag::whereIn('name', $words)->pluck('name')->toArray();
 
-           return false;
-            
-            return true; 
+            //if($existingTags);
+            if (empty($existingTags)) {
+                return true; 
+            } else {
+                $validator->setCustomMessages([
+                    'custom_validation' => 'наступні теги вже існують - '.$string1 = implode(', ', $existingTags)
+                    ]);
+            }
+
+            return false; 
 
 
         });

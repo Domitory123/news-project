@@ -29,7 +29,7 @@ class NewsController extends Controller
         $text = preg_replace_callback($pattern, function ($matches) use ($tags) {
             $tagName = $matches[0]; // Отримуємо слово з відповідності
             $tagId = $tags[$tagName]; // Отримуємо ідентифікатор для слова
-            return '<a href="' . route('show', $tagId) . '">' . $tagName . '</a>'; // Побудова URL з ідентифікатором
+            return '<a href="' . route('news.show', $tagId) . '">' . $tagName . '</a>'; // Побудова URL з ідентифікатором
         }, $text);
 
         $news->text=$text;
@@ -55,9 +55,9 @@ class NewsController extends Controller
         // Замінюємо відповідні слова в тексті на посилання з ідентифікаторами
         $text = preg_replace_callback($pattern, function ($matches) use ($tags,$news) {
             $tagName = $matches[0]; // Отримуємо слово з відповідності
-            $tagId = $tags[$tagName]; // Отримуємо ідентифікатор для слова
+            $tagId = $tags[mb_strtolower($tagName, 'UTF-8')]; // Отримуємо ідентифікатор для слова
             if ($tagId!=$news->id)
-              return '<a href="' . route('show', $tagId) . '">' . $tagName . '</a>'; // Побудова URL з ідентифікатором
+              return '<a href="' . route('news.show', $tagId) . '">' . $tagName . '</a>'; // Побудова URL з ідентифікатором
             else
               return $tagName;
         }, $text);
@@ -85,9 +85,9 @@ class NewsController extends Controller
                 // Замінюємо відповідні слова в тексті на посилання з ідентифікаторами
                 $text = preg_replace_callback($pattern, function ($matches) use ($tags,$n) {
                     $tagName = $matches[0]; // Отримуємо слово з відповідності
-                    $tagId = $tags[$tagName]; // Отримуємо ідентифікатор для слова
+                    $tagId = $tags[mb_strtolower($tagName, 'UTF-8')]; // Отримуємо ідентифікатор для слова
                     if ($tagId!=$n->id)
-                    return '<a href="' . route('show', $tagId) . '">' . $tagName . '</a>'; // Побудова URL з ідентифікатором
+                    return '<a href="' . route('news.show', $tagId) . '">' . $tagName . '</a>'; // Побудова URL з ідентифікатором
                     else
                      return $tagName;
                 }, $text);
@@ -103,7 +103,8 @@ class NewsController extends Controller
      */
     public function index()
     {
-        $News = News::get();
+        //$News = News::get();
+        $News = News::orderBy('created_at', 'desc')->paginate(1);
         return view('index' ,compact('News'));
     }
 
@@ -120,20 +121,26 @@ class NewsController extends Controller
      */
     public function store(NewsRequest $request)
     {
+ 
         $request->validated();
 
         $text = $request->input('tag');
-        $pattern = '/\p{L}+/u'; // Регулярний вираз для слова з будь-якою буквою в будь-якому алфавіті
+        $pattern = '/\p{L}+/u'; //
         preg_match_all($pattern, $text, $matches);
         $words = $matches[0];
+
+        $words = array_map(function ($word) {
+            return mb_strtolower($word, 'UTF-8');
+        }, $words);
+
+ 
+      //збереження фото
+        $photoName = $request->file('file')->store('uploads', 'public');
       
-            
-
-
         $news = new News();
         $news->text = $request->input('text');
-        $news->name = "name";
-        $news->photo='photo';
+        $news->name = $request->input('name');
+        $news->photo="/storage/".$photoName;
         $news->save();
 
         $tags=[];
@@ -149,7 +156,7 @@ class NewsController extends Controller
         $this->addTagsforNewtext($news);
 
         //$news = $this->addTag($news);
-        return redirect()->route('show', ['news' => $news]);
+        return redirect()->route('news.show', ['news' => $news]);
 
     }
 
@@ -158,7 +165,6 @@ class NewsController extends Controller
      */
     public function show(News $news)
     {
-        
        return view('show', compact('news'));
     }
 
@@ -167,7 +173,8 @@ class NewsController extends Controller
      */
     public function edit(News $news)
     {
-        //
+        //dd($news->getTagsString());
+        return view('edit', compact('news'));
     }
 
     /**

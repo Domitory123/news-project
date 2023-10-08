@@ -7,9 +7,13 @@ use App\Models\News;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DomParser;
 use Symfony\Component\DomCrawler\Crawler;
+use Illuminate\Support\Facades\Auth;
 
 class TagController extends Controller
 {
+
+   
+
     /**
      * Display a listing of the resource.
      */

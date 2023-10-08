@@ -12,8 +12,17 @@
             <div class="header">
                 <h1>типу хедер</h1>
                 <a href="{{ route('index') }}">головна</a>
+
                 <a href="{{ route('create') }}">створити</a>
-               
+                @if (!Auth::check())
+                <a href="{{ route('getSigin') }}">Увійти</a>
+                <a href="{{ route('registration.getSigUp') }}"><b>&nbsp;Зареєструватися.</b></a>
+                @endif
+              
+
+
+                <a href="{{ route('logout')}}"> Вихід </a>
+
             </div>
             <div class="content">
                 @yield('content')  

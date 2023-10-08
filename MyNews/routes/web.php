@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\TagController;
+use App\Http\Controllers\UserController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -27,11 +28,22 @@ Route::controller(NewsController::class)->group(function () {
     Route::get('/showdestroy/{news}','showDestroy')->name('news.showDestroy');
     Route::delete('/destroy/{news}','destroy')->name('news.destroy');
     Route::get('/destroyInfo','destroyInfo')->name('news.destroyInfo');
+   
+});
+
+// ->middleware('guest')
+Route::controller(UserController::class)->group(function () {
+    Route::get('registration/', 'getSigUp')->name('registration.getSigUp');
+    Route::post('registration/', 'postSigUp')->name('registration.postSigUp');
+    Route::get('login/', 'getSigin')->name('getSigin');
+    Route::post('login/', 'postSigin')->name('postSigin');
+    Route::get('logout/', 'logout')->name('logout');
     
 });
 
+
 Route::controller(TagController::class)->group(function () {
-    
+   
     Route::get('/delete/{tag}', 'destroy')->name('tag.delete');
   
 });

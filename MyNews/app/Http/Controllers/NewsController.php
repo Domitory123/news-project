@@ -12,11 +12,24 @@ use App\Http\Requests\NewsRequest;
 class NewsController extends Controller
 {
 
+    public function deleteTag(News $n){
+
+        $tags = $n->tags;
+        $News = News::get();
+ 
+        foreach ($News as $news) {
+           
+            foreach ($tags as $tag) {
+               $news->text = preg_replace('/<a[^>]*>'.preg_quote($tag->name, '/').'<\/a>/i', $tag->name, $news->text);
+               $news->save();
+            } 
+        }
+       $tag->delete();
+    }
+
     public function addTag(News $news){
 
        // Queue::push(new MyJob());  // Встановлення Laravel Queues:
-      
-
         $tags = Tag::pluck('news_id', 'name');
         $text = $news->text;
 
@@ -61,6 +74,7 @@ class NewsController extends Controller
             else
               return $tagName;
         }, $text);
+
 
         $news->text=$text;
         $news->save();
@@ -173,7 +187,6 @@ class NewsController extends Controller
      */
     public function edit(News $news)
     {
-        //dd($news->getTagsString());
         return view('edit', compact('news'));
     }
 
@@ -182,14 +195,81 @@ class NewsController extends Controller
      */
     public function update(Request $request, News $news)
     {
-        //
+        //$data = $request->validated();
+        $data = $request->all();
+        $originalNews = News::find($news->id);
+
+        //якщо  редагований тег
+        if ($originalNews->getTagsString() != $data['tag']){
+        
+            $this->deleteTag($originalNews);//видаляємо старі теги
+
+             $text = $data['tag'];
+             $pattern = '/\p{L}+/u'; //
+
+             preg_match_all($pattern, $text, $matches);
+             $words = $matches[0];
+    
+             $words = array_map(function ($word) {
+                 return mb_strtolower($word, 'UTF-8');
+             }, $words);
+
+             $tags=[];
+             foreach ($words as $word) {
+                $tag = new Tag();
+                $tag->name = $word;
+                $tag->news()->associate($originalNews);
+                $tag->save();
+                $tags[]=$tag->id;
+             }
+
+             $this->addTagsforAlltext($tags);
+        }
+
+        //якщо редаговано текст
+        if ($originalNews->getTextWithoutTag() != $data['text']){ 
+
+            $originalNews->text=$data['text'];
+            $originalNews->save();
+            $this->addTagsforNewtext($originalNews);
+        }
+
+        //коли міняємо картинку 
+        if ($request->file('file')!=null) {
+            unlink(public_path($originalNews->photo));
+            $photoName = $request->file('file')->store('uploads', 'public');
+            $originalNews->photo="/storage/".$photoName;
+            $originalNews->save();
+        }
+         
+       
+        if($originalNews->name != $data['name'])
+        {
+            $originalNews->name=$data['name'];
+            $originalNews->save();
+        }
+
+        return redirect()->route('news.show', ['news' => $originalNews]);
     }
 
+    public function showDestroy(News $news)
+    {
+        return view('destroy', compact('news'));
+    }
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(News $news)
     {
-        //
+       $this->deleteTag($news);
+       $news->delete();
+
+       return redirect()->route('news.destroyInfo');
     }
+    public function destroyInfo()
+    {
+        return view('destroyInfo');
+    }
+
+
 }

@@ -5,9 +5,9 @@
 <div class="container-create">
     <div class="create-form">
 
-        <form action="{{ route('store')}}" method="post" enctype="multipart/form-data">
+        <form action="{{ route('news.update',$news)}}" method="post" enctype="multipart/form-data">
             {{ csrf_field() }}
-
+            @method('put')
             <b>Назва</b> <br>
              <input class="" type="text" name="name" value="{{ $news->name }}" placeholder="name" > 
              <br>

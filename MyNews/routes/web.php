@@ -18,14 +18,14 @@ use App\Http\Controllers\UserController;
 
 Route::controller(NewsController::class)->group(function () {
     Route::get('/', 'index')->name('index');
-    Route::get('/create', 'create')->name('create');
-    Route::post('/store', 'store')->name('store');
     Route::get('/show/{news}','show')->name('news.show');
-    Route::get('/edit/{news}','edit')->name('news.edit');
-    Route::put('/update/{news}', 'update')->name('news.update');
-    Route::get('/showdestroy/{news}','showDestroy')->name('news.showDestroy');
-    Route::delete('/destroy/{news}','destroy')->name('news.destroy');
-    Route::get('/destroyInfo','destroyInfo')->name('news.destroyInfo');
+    Route::get('/create', 'create')->middleware('сheckAdmin')->name('create');
+    Route::post('/store', 'store')->middleware('сheckAdmin')->name('store');
+    Route::get('/edit/{news}','edit')->middleware('сheckAdmin')->name('news.edit');
+    Route::put('/update/{news}', 'update')->middleware('сheckAdmin')->name('news.update');
+    Route::get('/showdestroy/{news}','showDestroy')->middleware('сheckAdmin')->name('news.showDestroy');
+    Route::delete('/destroy/{news}','destroy')->middleware('сheckAdmin')->name('news.destroy');
+    Route::get('/destroyInfo','destroyInfo')->middleware('сheckAdmin')->name('news.destroyInfo');
    
 });
 

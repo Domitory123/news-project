@@ -10,7 +10,7 @@
 
         <div class="container-main">
             <div class="header">
-                <h1>типу хедер</h1>
+                <h1>Новини 27</h1>
                 <a href="{{ route('index') }}">головна</a>
                
 

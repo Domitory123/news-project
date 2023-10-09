@@ -30,7 +30,7 @@
             @if ($errors->has('file'))
             <div class="alert alert-danger">{{ $errors->first('file') }}</div>
              @endif
-
+            
                 <br>
             <button type="submit">Зберегти</button>
             

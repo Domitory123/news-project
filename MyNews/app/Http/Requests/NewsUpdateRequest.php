@@ -27,7 +27,8 @@ class NewsUpdateRequest extends FormRequest
             'name' => 'required|string|max:255',
             'text' => 'required|string',
             'tag' => 'required|string|custom_validation',
-            
+            'file' => '',
+            'id' => '',
         ];
     }
 
@@ -35,16 +36,15 @@ class NewsUpdateRequest extends FormRequest
     {
         $validator->addExtension('custom_validation', function ($attribute, $value, $parameters, $validator) {
             // Ваша логіка валідації тут
-           // dd($value);
 
            $pattern = '/\p{L}+/u';
            preg_match_all($pattern, $value, $matches);
            $words = $matches[0];
 
-          $words;
-          $existingTags = Tag::whereIn('name', $words)->pluck('name')->toArray();
+          $existingTags = Tag::whereIn('name', $words)
+          ->whereNotIn('news_id', [$validator->getData()['id']])
+          ->pluck('name')->toArray();
 
-            //if($existingTags);
             if (empty($existingTags)) {
                 return true; 
             } else {

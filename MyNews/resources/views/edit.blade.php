@@ -37,6 +37,9 @@
              @endif
              <img style="height:100px;" src="{{ asset($news->photo) }}"> 
                 <br>
+
+            <input class="" type="hidden" name="id"  value="{{ $news->id }}" >
+
             <button type="submit">Зберегти</button>
             
         </form>

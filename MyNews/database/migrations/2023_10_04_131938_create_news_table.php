@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('text');
-           // $table->bigInteger("user_id")->constrained("users");
             $table->string('photo');
             $table->boolean('active')->default(true); 
             $table->timestamps();

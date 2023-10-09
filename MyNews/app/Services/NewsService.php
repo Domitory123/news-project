@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services; 
 
 use App\Models\User;
 use App\Models\News;
@@ -218,5 +218,32 @@ class NewsService
       return $originalNews;
     }
 
+ /**
+     * проходимось по новому тексті і добавляємо всі теги 
+     * 
+     */
+    static public function addTagsforNewtextforFactory($news){
 
+        $tags = Tag::pluck('news_id', 'name');
+        $text = $news->text;
+
+
+        // Регулярний вираз для пошуку українських слів
+        $pattern = '/\b(' . implode('|', array_map(function ($tag) {
+            return preg_quote($tag, '/');
+        }, $tags->keys()->toArray())) . ')\b/ui';
+
+        // Замінюємо відповідні слова в тексті на посилання з ідентифікаторами
+        $text = preg_replace_callback($pattern, function ($matches) use ($tags,$news) {
+            $tagName = $matches[0]; // Отримуємо слово з відповідності
+            $tagId = $tags[mb_strtolower($tagName, 'UTF-8')]; // Отримуємо ідентифікатор для слова
+            if ($tagId!=$news->id)
+              return '<a href="' . 'http://127.0.0.1:8000/show/'.$tagId . '">' . $tagName . '</a>'; // Побудова URL з ідентифікатором
+            else
+              return $tagName;
+        }, $text);
+
+        $news->text=$text;
+        $news->save();
+    }
 }

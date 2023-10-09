@@ -12,18 +12,25 @@
             <div class="header">
                 <h1>типу хедер</h1>
                 <a href="{{ route('index') }}">головна</a>
+               
 
-                <a href="{{ route('create') }}">створити</a>
-                @if (!Auth::check())
-                <a href="{{ route('getSigin') }}">Увійти</a>
-                <a href="{{ route('registration.getSigUp') }}"><b>&nbsp;Зареєструватися.</b></a>
+                @if (Auth::check())
+
+                @if (Auth::user()->checkAdmin())
+                  <a href="{{ route('admin.index') }}">адмінка</a>
+                  @endif
                 @endif
-              
 
-
-                <a href="{{ route('logout')}}"> Вихід </a>
-
+                <div class="header-user">
+                    @if (!Auth::check())
+                        <a href="{{ route('getSigin') }}">Увійти</a>
+                        <a href="{{ route('registration.getSigUp') }}"><b>&nbsp;Зареєструватися.</b></a>
+                    @else
+                      <a href="{{ route('logout')}}"> Вихід </a>
+                    @endif
+                </div>
             </div>
+
             <div class="content">
                 @yield('content')  
             </div>

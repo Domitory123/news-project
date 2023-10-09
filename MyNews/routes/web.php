@@ -2,8 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NewsController;
-use App\Http\Controllers\TagController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -15,9 +16,6 @@ use App\Http\Controllers\UserController;
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
 Route::controller(NewsController::class)->group(function () {
     Route::get('/', 'index')->name('index');
     Route::get('/create', 'create')->name('create');
@@ -31,7 +29,6 @@ Route::controller(NewsController::class)->group(function () {
    
 });
 
-// ->middleware('guest')
 Route::controller(UserController::class)->group(function () {
     Route::get('registration/', 'getSigUp')->name('registration.getSigUp');
     Route::post('registration/', 'postSigUp')->name('registration.postSigUp');
@@ -41,9 +38,8 @@ Route::controller(UserController::class)->group(function () {
     
 });
 
-
-Route::controller(TagController::class)->group(function () {
+Route::controller(AdminController::class)->group(function () {
    
-    Route::get('/delete/{tag}', 'destroy')->name('tag.delete');
+    Route::get('/admin','index')->middleware('сheckAdmin')->name('admin.index');
   
 });

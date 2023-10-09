@@ -8,6 +8,7 @@ use App\Http\Requests\RegistrationRequest;
 use App\Services\AuthService; 
 use Illuminate\Support\Facades\Auth;
 
+
 class UserController extends Controller
 {
         /**

@@ -2,7 +2,7 @@
 
 @section('content')
 
-
+<a href="{{ url()->previous() }}"> &#8592; назад</a>
    <h1>Ви дійсно бажаєте видалити новину?</h1>
 
    <form action="{{ route('news.destroy', ['news' => $news]) }}" method="POST">

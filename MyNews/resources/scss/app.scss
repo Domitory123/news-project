@@ -13,6 +13,11 @@ body{
         height: 20%;
         background-color: rgb(205, 205, 205);
         padding: 0.5%;
+        display: flex;
+        .header-user{
+            background-color: rgb(119, 192, 251);
+
+        }
     }
 
     .content{

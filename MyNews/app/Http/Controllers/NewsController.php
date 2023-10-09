@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Queue;
 use App\Jobs\MyJob;
 use App\Http\Requests\NewsRequest;
+use App\Http\Requests\NewsUpdateRequest;
 
 class NewsController extends Controller
 {
@@ -24,7 +25,8 @@ class NewsController extends Controller
                $news->save();
             } 
         }
-       $tag->delete();
+
+        $n->tags()->delete();
     }
 
     public function addTag(News $news){
@@ -59,6 +61,7 @@ class NewsController extends Controller
 
         $tags = Tag::pluck('news_id', 'name');
         $text = $news->text;
+
 
         // Регулярний вираз для пошуку українських слів
         $pattern = '/\b(' . implode('|', array_map(function ($tag) {

@@ -15,9 +15,6 @@ body {
   background-color: rgb(205, 205, 205);
   padding: 0.5%;
 }
-.container-main .header .header-user {
-  background-color: rgb(119, 192, 251);
-}
 .container-main .login {
   font-size: 20px;
 }

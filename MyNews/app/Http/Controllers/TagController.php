@@ -12,8 +12,6 @@ use Illuminate\Support\Facades\Auth;
 class TagController extends Controller
 {
 
-   
-
     /**
      * Display a listing of the resource.
      */
@@ -67,28 +65,6 @@ class TagController extends Controller
      */
     public function destroy(Tag $tag)
     {
-       //перевірити на існування 
-
-//  $html = 'хороша <a href="http://127.0.0.1:8000/show/1">погода</a> сьогодні <a href="http://127.0.0.1:8000/show/1">добре</a>';
-
-//         $crawler = new Crawler($html);
-//         // Отримати всі теги <a>
-//         $linkTags = $crawler->filter('a');
-//         // Пройтися по всіх тегах <a> та замінити їх текстом
-//         $linkTags->each(function (Crawler $node) {
-//             $node->getNode(0)->parentNode->replaceChild(new \DOMText($node->text()), $node->getNode(0));
-//         });
-//         //Отримати остаточний текст
-//         $cleanText = $crawler->text();
-            
-       $News = News::get();
-     
-        foreach ($News as $news) {
-           
-            $news->text = preg_replace('/<a[^>]*>'.$tag->name.'<\/a>/', $tag->name, $news->text);
-            $news->save();
-        }
-       $tag->delete();
-
+ 
     }
 }

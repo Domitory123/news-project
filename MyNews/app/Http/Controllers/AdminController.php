@@ -22,7 +22,7 @@ class AdminController extends Controller
         $News = News::orderBy('created_at', 'desc')->paginate(2);
 
         return view('admin/index',compact('News'));
-        //return redirect()->route('index');
+
     }
 
 

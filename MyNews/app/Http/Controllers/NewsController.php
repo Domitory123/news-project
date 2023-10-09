@@ -69,7 +69,8 @@ class NewsController extends Controller
         $request->validated();
 
         $originalNews  = NewsService::update($request,$news); 
-        return redirect()->route('news.show', ['news' => $originalNews]);
+        return redirect()->route('index');
+       // return redirect()->route('news.show', ['news' => $originalNews]);
     }
 
     public function showDestroy(News $news)

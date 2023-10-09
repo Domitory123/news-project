@@ -37,10 +37,10 @@ class NewsService
              return preg_quote($tag, '/');
          }, $tags->keys()->toArray())) . ')\b/ui';
  
-         // Замінюємо відповідні слова в тексті на посилання з ідентифікаторами
+         // Замінюємо слова в тексті на посилання
          $text = preg_replace_callback($pattern, function ($matches) use ($tags) {
-             $tagName = $matches[0]; // Отримуємо слово з відповідності
-             $tagId = $tags[$tagName]; // Отримуємо ідентифікатор для слова
+             $tagName = $matches[0]; 
+             $tagId = $tags[$tagName]; 
              return '<a href="' . route('news.show', $tagId) . '">' . $tagName . '</a>';
          }, $text);
  
@@ -59,18 +59,17 @@ class NewsService
         $tags = Tag::pluck('news_id', 'name');
         $text = $news->text;
 
-
-        // Регулярний вираз для пошуку українських слів
+        // Регулярний вираз для пошуку слів
         $pattern = '/\b(' . implode('|', array_map(function ($tag) {
             return preg_quote($tag, '/');
         }, $tags->keys()->toArray())) . ')\b/ui';
 
-        // Замінюємо відповідні слова в тексті на посилання з ідентифікаторами
+        // Замінюємо слова в тексті 
         $text = preg_replace_callback($pattern, function ($matches) use ($tags,$news) {
-            $tagName = $matches[0]; // Отримуємо слово з відповідності
-            $tagId = $tags[mb_strtolower($tagName, 'UTF-8')]; // Отримуємо ідентифікатор для слова
+            $tagName = $matches[0]; 
+            $tagId = $tags[mb_strtolower($tagName, 'UTF-8')]; 
             if ($tagId!=$news->id)
-              return '<a href="' . route('news.show', $tagId) . '">' . $tagName . '</a>'; // Побудова URL з ідентифікатором
+              return '<a href="' . route('news.show', $tagId) . '">' . $tagName . '</a>'; 
             else
               return $tagName;
         }, $text);
@@ -88,7 +87,7 @@ class NewsService
     {
         $tags = Tag::whereIn('id', $tagIdsToRetrieve)->pluck('news_id','name');
      
-        //Регулярний вираз для пошуку українських слів
+        //Регулярний вираз для пошуку слів
         $pattern = '/\b(' . implode('|', array_map(function ($tag) {
            return preg_quote($tag, '/');
                 }, $tags->keys()->toArray())) . ')\b/ui';
@@ -96,7 +95,7 @@ class NewsService
         $news = News::get();
         foreach ($news as $n) {
             $text = $n->text;
-                // Замінюємо відповідні слова в тексті на посилання з ідентифікаторами
+                // Замінюємо відповідні слова на посилання 
                 $text = preg_replace_callback($pattern, function ($matches) use ($tags,$n) {
                     $tagName = $matches[0]; // Отримуємо слово з відповідності
                     $tagId = $tags[mb_strtolower($tagName, 'UTF-8')]; // Отримуємо ідентифікатор для слова
@@ -144,15 +143,12 @@ class NewsService
            $tags[]=$tag->id;
         }
 
-        
         MyJob::dispatch($tags);//addTagsforAlltext();//добавляємо нові теги в існуючі статті
 
        // NewsService::addTagsforAlltext($tags);//добавляємо нові теги в існуючі статті
         NewsService::addTagsforNewtext($news);//
 
         return $news;
-        //$news = $this->addTag($news);
-        // return redirect()->route('news.show', ['news' => $news]);
 
     }
 
@@ -219,7 +215,7 @@ class NewsService
     }
 
  /**
-     * проходимось по новому тексті і добавляємо всі теги 
+     * проходимось по новому тексті і добавляємо всі теги (для фабрики)
      * 
      */
     static public function addTagsforNewtextforFactory($news){
@@ -233,12 +229,12 @@ class NewsService
             return preg_quote($tag, '/');
         }, $tags->keys()->toArray())) . ')\b/ui';
 
-        // Замінюємо відповідні слова в тексті на посилання з ідентифікаторами
+        // Замінюємо  слова в тексті на посилання 
         $text = preg_replace_callback($pattern, function ($matches) use ($tags,$news) {
-            $tagName = $matches[0]; // Отримуємо слово з відповідності
-            $tagId = $tags[mb_strtolower($tagName, 'UTF-8')]; // Отримуємо ідентифікатор для слова
+            $tagName = $matches[0]; // 
+            $tagId = $tags[mb_strtolower($tagName, 'UTF-8')]; // 
             if ($tagId!=$news->id)
-              return '<a href="' . 'http://127.0.0.1:8000/show/'.$tagId . '">' . $tagName . '</a>'; // Побудова URL з ідентифікатором
+              return '<a href="' . 'http://127.0.0.1:8000/show/'.$tagId . '">' . $tagName . '</a>'; //
             else
               return $tagName;
         }, $text);

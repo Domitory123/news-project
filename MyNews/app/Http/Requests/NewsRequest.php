@@ -37,11 +37,13 @@ class NewsRequest extends FormRequest
             // Ваша логіка валідації тут
            // dd($value);
 
-           $pattern = '/\p{L}+/u';
-           preg_match_all($pattern, $value, $matches);
-           $words = $matches[0];
+        //    $pattern = '/\p{L}+/u';
+        //    preg_match_all($pattern, $value, $matches);
+        //    $words = $matches[0];
 
-          $words;
+           $pattern = '/[^\p{L}\d]+/u'; 
+           $words = preg_split($pattern, $value, -1, PREG_SPLIT_NO_EMPTY);
+
           $existingTags = Tag::whereIn('name', $words)->pluck('name')->toArray();
 
             //if($existingTags);

@@ -14,8 +14,15 @@ class Tag extends Model
     protected $fillable = [
         'name',
     ];
+
     public function news()
     {
-        return $this->belongsTo(News::class);
+      return $this->belongsTo(News::class);
     }
+
+    public function newsTag()
+    {
+      return $this->hasMany(NewsTag::class);
+    }
+
 }

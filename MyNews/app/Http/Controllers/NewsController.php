@@ -20,7 +20,7 @@ class NewsController extends Controller
     {
         $News = News::where('active', true)
         ->orderBy('created_at', 'desc')->paginate(3);
-    
+
         return view('index' ,compact('News'));
     }
 
@@ -49,7 +49,7 @@ class NewsController extends Controller
      * Display the specified resource.
      */
     public function show(News $news)
-    {
+    {   
        return view('show', compact('news'));
     }
 

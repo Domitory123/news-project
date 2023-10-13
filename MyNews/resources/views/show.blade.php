@@ -13,7 +13,10 @@
 
   @endforeach 
     <p>текст</p>
-    {!!$news->text!!} <br /> 
+    {{-- {!!$news->text!!} <br />  --}}
+
+    {!!$news->showTextWithTags()!!}
+
 
   <br />
 

@@ -37,10 +37,13 @@ class NewsUpdateRequest extends FormRequest
         $validator->addExtension('custom_validation', function ($attribute, $value, $parameters, $validator) {
             // Ваша логіка валідації тут
 
-           $pattern = '/\p{L}+/u';
-           preg_match_all($pattern, $value, $matches);
-           $words = $matches[0];
+        //    $pattern = '/\p{L}+/u';
+        //    preg_match_all($pattern, $value, $matches);
+        //    $words = $matches[0];
 
+        $pattern = '/[^\p{L}\d]+/u'; 
+        $words = preg_split($pattern, $value, -1, PREG_SPLIT_NO_EMPTY);
+        
           $existingTags = Tag::whereIn('name', $words)
           ->whereNotIn('news_id', [$validator->getData()['id']])
           ->pluck('name')->toArray();

@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('news_tags', function (Blueprint $table) {
             $table->id();
-            $table->Integer("news_id")->constrained("news")->onDelete('cascade');
-            $table->Integer("tag_id")->constrained("tags");
+            $table->Integer("news_id")->constrained("news");
+            $table->Integer("tag_id")->constrained("tags")->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -42,7 +42,7 @@ class NewsUpdateRequest extends FormRequest
         //    $words = $matches[0];
 
         $pattern = '/[^\p{L}\d]+/u'; 
-        $words = preg_split($pattern, $value, -1, PREG_SPLIT_NO_EMPTY);
+        $words = preg_split($pattern, mb_strtolower($value, 'UTF-8'), -1, PREG_SPLIT_NO_EMPTY);
         
           $existingTags = Tag::whereIn('name', $words)
           ->whereNotIn('news_id', [$validator->getData()['id']])

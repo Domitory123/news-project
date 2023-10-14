@@ -15,17 +15,17 @@ class NewsService
 {   
     
    static public function deleteTag(News $n){
-        $tags = $n->tags;
-        $News = News::get();
+        // $tags = $n->tags;
+        // $News = News::get();
  
-        foreach ($News as $news) {
+        // // foreach ($News as $news) {
            
-            foreach ($tags as $tag) {
-               $news->text = preg_replace('/<a[^>]*>'.preg_quote($tag->name, '/').'<\/a>/i', $tag->name, $news->text);
-               $news->save();
-            } 
-        }
-        $n->tags()->delete();
+        // //     foreach ($tags as $tag) {
+        // //        $news->text = preg_replace('/<a[^>]*>'.preg_quote($tag->name, '/').'<\/a>/i', $tag->name, $news->text);
+        // //        $news->save();
+        // //     } 
+        // // }
+        // $n->tags()->delete();
     }
 
     static  public function addTag(News $news){
@@ -58,29 +58,31 @@ class NewsService
     static public function addTagsforNewtext($news){
 
       //  $tags = Tag::pluck('news_id', 'name');
-        $tags = Tag::pluck('id', 'name');
-        $text = $news->text;
-       // print_r($tags);
-   
+        $tags = Tag::where('news_id','!=',$news->id)->pluck('id', 'name');
+       
         // Регулярний вираз для пошуку слів
         $pattern = '/\b(' . implode('|', array_map(function ($tag) {
             return preg_quote($tag, '/');
         }, $tags->keys()->toArray())) . ')\b/ui';
-
-  
+        echo $tags;
+        echo " ====";
        preg_replace_callback($pattern, function ($matches) use ($tags,$news) {
             $tagName = $matches[0]; 
-            $tagId = $tags[mb_strtolower($tagName, 'UTF-8')];
-      
-            if ($tagId!=$news->id){//зроьити нову перевірку =================================================
-                $newsTag =  new  NewsTag();
-                $newsTag->news_id=$news->id;
-                $newsTag->tag_id=$tagId;
+            echo $tagName;
+            echo "=====";
+            try { 
+                $tagId = $tags[mb_strtolower($tagName, 'UTF-8')];
+                $newsTag = new  NewsTag();
+                $newsTag->news_id = $news->id;
+                $newsTag->tag_id = $tagId;
                 $newsTag->save();
+            } catch (\Exception $e) {
+              echo $tagName;
             }
-            else
-              return $tagName;
-        }, $text);
+           
+           
+
+        }, $news->text);
 
        
       //  NewsTag
@@ -103,32 +105,30 @@ class NewsService
      * проходимось по всіх текстах і добавляємо нові теги
      * 
      */
-    static  public function addTagsforAlltext($tagIdsToRetrieve)
+    static  public function addTagsforAlltext($tagId ,News $n)
     {
-        $tags = Tag::whereIn('id', $tagIdsToRetrieve)->pluck('id','name');
-     
+
+      $tags = Tag::whereIn('id', $tagId)->pluck('id','name');
+
         // //Регулярний вираз для пошуку слів
         $pattern = '/\b(' . implode('|', array_map(function ($tag) {
            return preg_quote($tag, '/');
                 }, $tags->keys()->toArray())) . ')\b/ui';
 
-        $News = News::get();
+        $News = News::whereNotIn('id', [$n->id])->get();
+
         foreach ($News as $news) {
-            $text = $news->text;
-            
+        
                 preg_replace_callback($pattern, function ($matches) use ($tags,$news) {
                     $tagName = $matches[0]; 
                     $tagId = $tags[mb_strtolower($tagName, 'UTF-8')];
               
-                    if ($tagId!=$news->id){
-                        $newsTag = new NewsTag();
-                        $newsTag->news_id=$news->id;
-                        $newsTag->tag_id=$tagId;
-                        $newsTag->save();
-                    }
-                    else
-                      return $tagName;
-                }, $text);
+                    $newsTag = new NewsTag();
+                    $newsTag->news_id=$news->id;
+                    $newsTag->tag_id=$tagId;
+                    $newsTag->save();
+                   
+                }, $news->text);
     
         }
 
@@ -159,28 +159,14 @@ class NewsService
         // }
     }
 
- /**
-     * Store a newly created resource in storage.
-     */
-    static public function store(NewsRequest $request)
-    {
-        $text = $request->input('tag');
-     
+    static  public function storeTag($text,News $news){
+
         $pattern = '/[^\p{L}\d]+/u'; 
         $words = preg_split($pattern, $text, -1, PREG_SPLIT_NO_EMPTY);
-        //print_r($words);
+        
         $words = array_map(function ($word) {
             return mb_strtolower($word, 'UTF-8');
         }, $words);
-
-      //збереження фото
-        $photoName = $request->file('file')->store('uploads', 'public');
-      
-        $news = new News();
-        $news->text = $request->input('text');
-        $news->name = $request->input('name');
-        $news->photo="/storage/".$photoName;
-        $news->save();
 
         $tags=[];
         foreach ($words as $word) {
@@ -191,8 +177,30 @@ class NewsService
            $tags[]=$tag->id;
         }
 
-        NewsService::addTagsforNewtext($news);//
-        NewsService::addTagsforAlltext($tags);//добавляємо нові теги в існуючі статті
+        return $tags;
+    }
+
+ /**
+     * Store a newly created resource in storage.
+     */
+    static public function store(NewsRequest $request)
+    {
+       // $text = $request->input('tag');
+      
+      //збереження фото
+        $photoName = $request->file('file')->store('uploads', 'public');
+      
+        $news = new News();
+        $news->text = $request->input('text');
+        $news->name = $request->input('name');
+        $news->photo="/storage/".$photoName;
+        $news->save();
+
+        $tags = NewsService::storeTag($request->input('tag'),$news);
+       
+       
+        NewsService::addTagsforNewtext($news);//добавляємо теги в нову новину
+        NewsService::addTagsforAlltext($tags,$news);//добавляємо нові теги в існуючі статті
 
        // MyJob::dispatch($tags);//addTagsforAlltext();//добавляємо нові теги в існуючі статті
        // NewsService::addTagsforAlltext($tags);//добавляємо нові теги в існуючі статті
@@ -214,28 +222,32 @@ class NewsService
         //якщо  редагований тег
         if ($originalNews->getTagsString() != $data['tag']){
         
-            NewsService::deleteTag($originalNews);//видаляємо старі теги
+            $originalNews->tags()->delete();
+
+
+
+           //NewsService::deleteTag($originalNews);//видаляємо старі теги
             
-             $text = $data['tag'];
-             $pattern = '/\p{L}+/u'; //
+            //  $text = $data['tag'];
+            //  $pattern = '/\p{L}+/u'; //
 
-             preg_match_all($pattern, $text, $matches);
-             $words = $matches[0];
+            //  preg_match_all($pattern, $text, $matches);
+            //  $words = $matches[0];
     
-             $words = array_map(function ($word) {
-                 return mb_strtolower($word, 'UTF-8');
-             }, $words);
+            //  $words = array_map(function ($word) {
+            //      return mb_strtolower($word, 'UTF-8');
+            //  }, $words);
 
-             $tags=[];
-             foreach ($words as $word) {
-                $tag = new Tag();
-                $tag->name = $word;
-                $tag->news()->associate($originalNews);
-                $tag->save();
-                $tags[]=$tag->id;
-             }
+            //  $tags=[];
+            //  foreach ($words as $word) {
+            //     $tag = new Tag();
+            //     $tag->name = $word;
+            //     $tag->news()->associate($originalNews);
+            //     $tag->save();
+            //     $tags[]=$tag->id;
+            //  }
 
-             MyJob::dispatch($tags);//addTagsforAlltext();//добавляємо нові теги в існуючі статті
+            //  MyJob::dispatch($tags);//addTagsforAlltext();//добавляємо нові теги в існуючі статті
             // NewsService::addTagsforAlltext($tags);
         }
 

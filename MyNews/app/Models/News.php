@@ -40,8 +40,11 @@ class News extends Model
     ->where('news_tags.news_id', $this->id)
     ->pluck('tags.news_id', 'tags.name');
 
-    $text = $this->text;
-    
+      if (count($tags)==0) 
+         return $this->text;
+
+
+     $text = $this->text;
       // Регулярний вираз для пошуку слів
       $pattern = '/\b(' . implode('|', array_map(function ($tag) {
           return preg_quote($tag, '/');

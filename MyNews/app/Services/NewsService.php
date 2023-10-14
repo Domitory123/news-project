@@ -64,12 +64,10 @@ class NewsService
         $pattern = '/\b(' . implode('|', array_map(function ($tag) {
             return preg_quote($tag, '/');
         }, $tags->keys()->toArray())) . ')\b/ui';
-        echo $tags;
-        echo " ====";
+ 
        preg_replace_callback($pattern, function ($matches) use ($tags,$news) {
+
             $tagName = $matches[0]; 
-            echo $tagName;
-            echo "=====";
             try { 
                 $tagId = $tags[mb_strtolower($tagName, 'UTF-8')];
                 $newsTag = new  NewsTag();
@@ -108,30 +106,50 @@ class NewsService
     static  public function addTagsforAlltext($tagId ,News $n)
     {
 
-      $tags = Tag::whereIn('id', $tagId)->pluck('id','name');
+      $tags = Tag::whereIn('id', $tagId)->get();
 
+     
         // //Регулярний вираз для пошуку слів
-        $pattern = '/\b(' . implode('|', array_map(function ($tag) {
-           return preg_quote($tag, '/');
-                }, $tags->keys()->toArray())) . ')\b/ui';
+        // $pattern = '/\b(' . implode('|', array_map(function ($tag) {
+        //    return preg_quote($tag, '/');
+        //         }, $tags->keys()->toArray())) . ')\b/ui';
 
         $News = News::whereNotIn('id', [$n->id])->get();
+        
+       // $news = News::find($newsId); // Припустимо, що у вас є новина з відповідним ID
+       // $text = $news->text;
+        
+      //  $tags = Tag::all(); // Отримуємо всі теги
+        // Розбиваємо текст на слова
 
         foreach ($News as $news) {
-        
-                preg_replace_callback($pattern, function ($matches) use ($tags,$news) {
-                    $tagName = $matches[0]; 
-                    $tagId = $tags[mb_strtolower($tagName, 'UTF-8')];
-              
+           
+            foreach ($tags as $tag) {
+               
+                if (stripos(mb_strtolower($news->text, 'UTF-8'), $tag->name) !== false) {
+  
                     $newsTag = new NewsTag();
                     $newsTag->news_id=$news->id;
-                    $newsTag->tag_id=$tagId;
+                    $newsTag->tag_id=$tag->id;
                     $newsTag->save();
-                   
-                }, $news->text);
-    
+                }
+            }
         }
 
+        // foreach ($News as $news) {
+        
+        //         preg_replace_callback($pattern, function ($matches) use ($tags,$news) {
+        //             $tagName = $matches[0]; 
+        //             $tagId = $tags[mb_strtolower($tagName, 'UTF-8')];
+              
+        //             $newsTag = new NewsTag();
+        //             $newsTag->news_id=$news->id;
+        //             $newsTag->tag_id=$tagId;
+        //             $newsTag->save();
+                   
+        //         }, $news->text);
+    
+        // }
 
 
         //$tags = Tag::whereIn('id', $tagIdsToRetrieve)->pluck('news_id','name');
@@ -159,7 +177,7 @@ class NewsService
         // }
     }
 
-    static  public function storeTag($text,News $news){
+    static  public function storeTag($text, News $news){
 
         $pattern = '/[^\p{L}\d]+/u'; 
         $words = preg_split($pattern, $text, -1, PREG_SPLIT_NO_EMPTY);
@@ -167,9 +185,9 @@ class NewsService
         $words = array_map(function ($word) {
             return mb_strtolower($word, 'UTF-8');
         }, $words);
-
+        $uniqueWords = array_unique($words);
         $tags=[];
-        foreach ($words as $word) {
+        foreach ($uniqueWords as $word) {
            $tag = new Tag();
            $tag->name = $word;
            $tag->news()->associate($news);
@@ -223,32 +241,8 @@ class NewsService
         if ($originalNews->getTagsString() != $data['tag']){
         
             $originalNews->tags()->delete();
-
-
-
-           //NewsService::deleteTag($originalNews);//видаляємо старі теги
-            
-            //  $text = $data['tag'];
-            //  $pattern = '/\p{L}+/u'; //
-
-            //  preg_match_all($pattern, $text, $matches);
-            //  $words = $matches[0];
-    
-            //  $words = array_map(function ($word) {
-            //      return mb_strtolower($word, 'UTF-8');
-            //  }, $words);
-
-            //  $tags=[];
-            //  foreach ($words as $word) {
-            //     $tag = new Tag();
-            //     $tag->name = $word;
-            //     $tag->news()->associate($originalNews);
-            //     $tag->save();
-            //     $tags[]=$tag->id;
-            //  }
-
-            //  MyJob::dispatch($tags);//addTagsforAlltext();//добавляємо нові теги в існуючі статті
-            // NewsService::addTagsforAlltext($tags);
+            $tags = NewsService::storeTag($request->input('tag'),$news);
+            NewsService::addTagsforAlltext($tags,$news);
         }
 
         //якщо редаговано текст

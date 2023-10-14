@@ -34,14 +34,10 @@ class NewsRequest extends FormRequest
     protected function withValidator($validator)
     {
         $validator->addExtension('custom_validation', function ($attribute, $value, $parameters, $validator) {
-            // Ваша логіка валідації тут
-           // dd($value);
-
-        //    $pattern = '/\p{L}+/u';
-        //    preg_match_all($pattern, $value, $matches);
-        //    $words = $matches[0];
+          
 
            $pattern = '/[^\p{L}\d]+/u'; 
+        
            $words = preg_split($pattern, mb_strtolower($value, 'UTF-8'), -1, PREG_SPLIT_NO_EMPTY);
 
            $existingTags = Tag::whereIn('name', $words)->pluck('name')->toArray();
@@ -56,7 +52,6 @@ class NewsRequest extends FormRequest
             }
 
             return false; 
-
 
         });
     }

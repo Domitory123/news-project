@@ -26,11 +26,15 @@
             @if ($errors->has('text'))
                 <div class="alert alert-danger">{{ $errors->first('text') }}</div>
             @endif
+           
+            <input type="checkbox" checked name="active" id="active">
+            <label for="active">Видимість</label><br>
+
             <input class="" type="file" name="file"  accept="image/*" >
             @if ($errors->has('file'))
             <div class="alert alert-danger">{{ $errors->first('file') }}</div>
              @endif
-            
+             <br>
                 <br>
             <button type="submit">Зберегти</button>
             

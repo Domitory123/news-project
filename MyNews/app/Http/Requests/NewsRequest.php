@@ -28,6 +28,7 @@ class NewsRequest extends FormRequest
             'text' => 'required|string',
             'tag' => 'required|string|custom_validation',
             'file' => 'required',
+            'active' => '',
         ];
     }
 

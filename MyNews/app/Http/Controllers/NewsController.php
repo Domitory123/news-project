@@ -39,10 +39,9 @@ class NewsController extends Controller
     {
         $request->validated();
         $news = NewsService::store($request);
-        return redirect()->route('index');
+        return redirect()->route('admin.index');
       
        // return redirect()->route('news.show', ['news' => $news]);
-
     }
 
     /**
@@ -69,7 +68,7 @@ class NewsController extends Controller
         $request->validated();
 
         $originalNews  = NewsService::update($request,$news); 
-        return redirect()->route('index');
+        return redirect()->route('admin.index');
        // return redirect()->route('news.show', ['news' => $originalNews]);
     }
 
@@ -83,9 +82,8 @@ class NewsController extends Controller
      */
     public function destroy(News $news)
     {
-       NewsService::deleteTag($news);
-       $news->delete();
-
+       NewsService::delete($news);
+  
        return redirect()->route('news.destroyInfo');
     }
 

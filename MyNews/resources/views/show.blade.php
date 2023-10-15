@@ -3,7 +3,6 @@
 @section('content')
 
 
-<a href="{{ url()->previous() }}"> &#8592; назад</a>
   <h1>{{$news->name}}</h1> <br /> 
 
   <img style="height:500px;" src="{{ asset($news->photo) }}"> 

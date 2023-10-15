@@ -24,7 +24,6 @@
                 <div class="alert alert-danger">{{ $errors->first('tag') }}</div>
             @endif
             
-
             <br>
             <b>Текст</b> <br>
                 <textarea name="text" cols="53"  rows="15" placeholder="text" >{{ $news->getTextWithoutTag() }}</textarea> <br/>
@@ -37,7 +36,10 @@
              @endif
              <img style="height:100px;" src="{{ asset($news->photo) }}"> 
                 <br>
-
+                <br>
+            <input type="checkbox" @if ($news->active) checked @endif name="active" id="active">
+            <label for="active">Видимість</label><br>
+            <br>
             <input class="" type="hidden" name="id"  value="{{ $news->id }}" >
 
             <button type="submit">Зберегти</button>

@@ -27,6 +27,7 @@ class NewsUpdateRequest extends FormRequest
             'name' => 'required|string|max:255',
             'text' => 'required|string',
             'tag' => 'required|string|custom_validation',
+            'active' => '',
             'file' => '',
             'id' => '',
         ];

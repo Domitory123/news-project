@@ -23,7 +23,7 @@
     <a href="{{ route('news.destroy',$news) }}">видалити</a>  --}}
    
     <button type="submit">Видалити</button>
-    <a href="{{ url()->previous() }}">скасувати</a>
+    <a href="{{ route('admin.index')}}">скасувати</a>
 </form>
 
 

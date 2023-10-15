@@ -1,7 +1,7 @@
 @extends('app')
 
 @section('content')
-<a href="{{ url()->previous() }}"> &#8592; назад</a>
+<a href="{{ route('admin.index')}}"> &#8592; назад</a>
 <h2>Створення новини</h2>
 <div class="container-create">
     <div class="create-form">
